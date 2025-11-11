@@ -1,0 +1,184 @@
+/* RUTA: (Tu servidor en Hostinger) /aprobar-descuento.css */
+/* INSTRUCCIÓN: Reemplaza el contenido completo de este archivo. */
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+    margin: 0;
+    /* CORRECCIÓN: Centramos por defecto, pero lo cambiaremos en móvil */
+    align-items: center; 
+}
+
+.main-card {
+    background: white;
+    border-radius: 0.75rem; /* Un poco más redondeado */
+    padding: 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    max-width: 550px; /* Un poco más angosto */
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no aumente el tamaño */
+}
+
+.text-center {
+    text-align: center;
+}
+
+.details-container > div {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten */
+}
+
+.product-box {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+    width: 100%; /* Ocupa todo el ancho */
+}
+
+.product-box > div {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+}
+
+.price-original {
+    color: #6b7280;
+    text-decoration: line-through;
+}
+
+.price-solicitado {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.justification-box {
+    background: #f3f4f6;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+    width: 100%; /* Ocupa todo el ancho */
+    text-align: right;
+}
+
+.commission-box {
+    background: #eff6ff;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin: 1.5rem 0;
+}
+
+.input-field {
+    margin-top: 0.5rem;
+    display: block;
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.actions-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-approve {
+    background-color: #22c55e;
+    color: white;
+}
+
+.btn-approve:hover:not(:disabled) {
+    background-color: #16a34a;
+}
+
+.btn-reject {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-reject:hover:not(:disabled) {
+    background-color: #dc2626;
+}
+
+.result-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 3rem 2rem;
+    max-width: 600px;
+    text-align: center;
+    display: none;
+}
+
+.text-red {
+    color: #dc2626;
+}
+
+#impacto-container {
+    margin-top: 1rem;
+}
+
+#impacto-container p {
+    margin: 0.5rem 0;
+}
+
+/* **INICIO DE LA CORRECCIÓN RESPONSIVE** */
+@media (max-width: 640px) {
+    body {
+        padding: 0; /* Sin padding en el body para que la tarjeta ocupe todo */
+        align-items: flex-start; /* Alinea la tarjeta arriba y permite el scroll */
+    }
+    .main-card {
+        padding: 1rem; /* Menos padding interno en la tarjeta */
+        border-radius: 0; /* Sin bordes redondeados para que se vea integrado */
+        box-shadow: none; /* Sin sombra */
+        border: none; /* Sin borde */
+        min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+    }
+    .actions-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .btn {
+        width: 100%;
+        padding: 1rem; /* Botones más grandes y fáciles de tocar */
+        font-size: 1.1rem;
+    }
+}

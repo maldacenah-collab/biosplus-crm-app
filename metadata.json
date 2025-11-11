@@ -1,0 +1,5 @@
+{
+  "name": "Gemini CRM",
+  "description": "A modern CRM application built with React and powered by Gemini, designed to streamline your business processes. The user (Hernán) is the business expert, and the assistant (Gemini) is the technical expert responsible for implementation.",
+  "requestFramePermissions": []
+}

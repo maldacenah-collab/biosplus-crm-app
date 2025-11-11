@@ -1,0 +1,133 @@
+-- =================================================================
+-- SCRIPT DE INICIALIZACIÓN DE BASE DE DATOS - VERSIÓN DEFINITIVA
+-- =================================================================
+-- Se añade el trigger para la creación automática de perfiles y se
+-- mantienen las políticas de seguridad individuales que replican
+-- el entorno de producción funcional.
+-- =================================================================
+
+
+-- =================================================================
+-- FUNCIÓN Y TRIGGER PARA CREAR PERFILES DE USUARIO AUTOMÁTICAMENTE
+-- =================================================================
+-- ESTA ES LA CORRECCIÓN CLAVE.
+-- Crea un perfil público para cada nuevo usuario de Supabase Auth.
+-- Si el perfil ya existe (por ID), no hace nada para evitar errores.
+-- =================================================================
+
+-- 1. Crear la función que se ejecutará con el trigger.
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.perfiles (id, nombre, email, organizacion_id)
+  values (
+    new.id,
+    new.raw_user_meta_data ->> 'nombre',
+    new.email,
+    1 -- Asigna a la organización 1 por defecto. Cambiar si es necesario.
+  )
+  on conflict (id) do nothing; -- MODIFICACIÓN CLAVE: Evita el error de duplicado.
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- 2. Crear el trigger que llama a la función después de que un usuario se inserta en auth.users
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+
+-- =================================================================
+-- POLÍTICAS PARA LA TABLA 'contactos'
+-- =================================================================
+
+-- HABILITAR Row Level Security (RLS) para la tabla 'contactos'.
+ALTER TABLE public.contactos ENABLE ROW LEVEL SECURITY;
+
+-- ELIMINAR CUALQUIER política antigua para empezar de cero.
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT policyname FROM pg_policies WHERE tablename = 'contactos' AND schemaname = 'public') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS "' || r.policyname || '" ON public.contactos;';
+    END LOOP;
+END$$;
+
+-- POLÍTICA DE LECTURA (SELECT)
+CREATE POLICY "Permitir lectura de contactos de la misma organizacion"
+ON public.contactos
+FOR SELECT
+TO public
+USING (
+  organizacion_id = (SELECT organizacion_id FROM public.perfiles WHERE id = auth.uid())
+);
+
+-- POLÍTICA DE INSERCIÓN (INSERT)
+CREATE POLICY "Permitir insercion de contactos en la misma organizacion"
+ON public.contactos
+FOR INSERT
+TO public
+WITH CHECK (
+  organizacion_id = (SELECT organizacion_id FROM public.perfiles WHERE id = auth.uid())
+);
+
+-- POLÍTICA DE ACTUALIZACIÓN (UPDATE)
+CREATE POLICY "Permitir actualizacion de contactos de la misma organizacion"
+ON public.contactos
+FOR UPDATE
+TO public
+USING (
+  organizacion_id = (SELECT organizacion_id FROM public.perfiles WHERE id = auth.uid())
+)
+WITH CHECK (
+  organizacion_id = (SELECT organizacion_id FROM public.perfiles WHERE id = auth.uid())
+);
+
+-- POLÍTICA DE BORRADO (DELETE)
+CREATE POLICY "Permitir eliminacion de contactos de la misma organizacion"
+ON public.contactos
+FOR DELETE
+TO public
+USING (
+  organizacion_id = (SELECT organizacion_id FROM public.perfiles WHERE id = auth.uid())
+);
+
+-- =================================================================
+-- POLÍTICAS PARA LA TABLA 'perfiles'
+-- =================================================================
+
+-- HABILITAR RLS para la tabla 'perfiles'.
+ALTER TABLE public.perfiles ENABLE ROW LEVEL SECURITY;
+
+-- ELIMINAR políticas antiguas en 'perfiles'.
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT policyname FROM pg_policies WHERE tablename = 'perfiles' AND schemaname = 'public') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS "' || r.policyname || '" ON public.perfiles;';
+    END LOOP;
+END$$;
+
+-- POLÍTICA DE LECTURA (SELECT) - ESENCIAL PARA OTRAS POLÍTICAS
+CREATE POLICY "Permitir a los usuarios leer su propio perfil"
+ON public.perfiles
+FOR SELECT
+TO public
+USING (
+  auth.uid() = id
+);
+
+-- POLÍTICA DE ACTUALIZACIÓN (UPDATE)
+CREATE POLICY "Permitir a los usuarios actualizar su propio perfil"
+ON public.perfiles
+FOR UPDATE
+TO public
+USING (
+  auth.uid() = id
+)
+WITH CHECK (
+  auth.uid() = id
+);
