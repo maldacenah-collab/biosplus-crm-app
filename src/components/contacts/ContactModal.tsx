@@ -176,20 +176,12 @@ const ContactModal = ({ isOpen, onClose, contact }: ContactModalProps) => {
     const checked = (e.target as HTMLInputElement).checked;
 
     let processedValue: any = value;
+    // For all foreign key fields, convert empty string to null to avoid DB errors (like sending 0).
     if (name.endsWith('_id')) {
-        processedValue = value === '' ? null : parseInt(value, 10);
+      processedValue = value === '' ? null : parseInt(value, 10);
     }
     
-    if (name === 'zona_id') {
-      const selectedZone = zonas.find(z => z.id === processedValue);
-      setFormData(prev => ({
-        ...prev,
-        zona_id: processedValue,
-        zona: selectedZone?.nombre
-      }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : processedValue }));
-    }
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : processedValue }));
   };
 
   const handleAddressChange = (addressType: 'domicilio_fiscal' | 'direccion_entrega' | 'direccion_entrega_2', field: 'full_address' | 'days' | 'hours' | 'piso' | 'depto' | 'zip', value: string) => {
@@ -236,11 +228,11 @@ const ContactModal = ({ isOpen, onClose, contact }: ContactModalProps) => {
                     <div><label htmlFor="profesion" className="form-label">Profesión</label><select name="profesion" id="profesion" className="form-input" value={formData.profesion || ''} onChange={handleChange}><option value="">Seleccionar...</option><option>Médico Esteticista</option><option>Odontólogo</option><option>Cosmiatra</option><option>Kinesiólogo</option></select></div>
                     <div><label htmlFor="condicion_pago_id" className="form-label">Condición de Pago</label><select name="condicion_pago_id" id="condicion_pago_id" className="form-input" value={formData.condicion_pago_id || ''} onChange={handleChange}><option value="">Ninguna</option>{paymentConditions.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}</select></div>
                     <div>
-                        <label htmlFor="zona_id" className="form-label">Zona de Envío</label>
-                        <select name="zona_id" id="zona_id" className="form-input" value={formData.zona_id || ''} onChange={handleChange}>
+                        <label htmlFor="zona" className="form-label">Zona de Envío</label>
+                        <select name="zona" id="zona" className="form-input" value={formData.zona || ''} onChange={handleChange}>
                             <option value="">Seleccionar Zona...</option>
                             {zonas.map(z => (
-                                <option key={z.id} value={z.id}>{z.nombre}</option>
+                                <option key={z.id} value={z.nombre}>{z.nombre}</option>
                             ))}
                         </select>
                     </div>

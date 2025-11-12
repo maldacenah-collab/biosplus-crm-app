@@ -86,10 +86,8 @@ const OpportunityModal = ({ isOpen, onClose, opportunityId, contactData, isReadO
       return acc;
     }, {} as Record<string, GroupedProduct>);
 
-    // FIX: Explicitly type the array from Object.values to ensure TypeScript correctly infers
-    // the type for the subsequent .map() operation, resolving the 'unknown' type error.
-    const values: GroupedProduct[] = Object.values(grouped);
-    return values.sort((a, b) => a.name.localeCompare(b.name));
+    // FIX: Explicitly type `a` and `b` in the sort function to resolve error.
+    return Object.values(grouped).sort((a: GroupedProduct, b: GroupedProduct) => a.name.localeCompare(b.name));
   }, [products]);
 
   useEffect(() => {

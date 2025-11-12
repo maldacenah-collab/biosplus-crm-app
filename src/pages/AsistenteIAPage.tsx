@@ -1,7 +1,6 @@
 // src/pages/AsistenteIAPage.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-// Fix: Use `GoogleGenAI` instead of the deprecated `GoogleGenerativeAI`.
 import { GoogleGenAI, Chat } from '@google/genai';
 
 interface Message {
@@ -23,7 +22,6 @@ const AsistenteIAPage = () => {
   // Initialize the chat session on component mount
   useEffect(() => {
     try {
-      // Fix: Use `GoogleGenAI` instead of the deprecated `GoogleGenerativeAI`.
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       chatSession.current = ai.chats.create({
         model: 'gemini-2.5-flash',

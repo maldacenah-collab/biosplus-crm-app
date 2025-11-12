@@ -141,12 +141,13 @@ const PedidoModal = ({ isOpen, onClose, pedidoId, opportunityData, contactData: 
 
         setShippingInfo({ cost: 0, zoneName: null, isLoading: true, zoneId: null, bonusThreshold: null });
 
-        if (!currentContact || !currentContact.zona_id) {
+        if (!currentContact || !currentContact.zona) {
             setShippingInfo({ cost: 0, zoneName: 'Sin zona', isLoading: false, zoneId: null, bonusThreshold: null });
             return;
         }
 
-        const foundZone = zonas.find(z => z.id === currentContact.zona_id);
+        const contactZoneName = currentContact.zona.toLowerCase();
+        const foundZone = zonas.find(z => z.nombre.toLowerCase() === contactZoneName);
 
         if (foundZone) {
             let finalCost = foundZone.costo || 0;

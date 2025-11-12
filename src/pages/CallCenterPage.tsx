@@ -1,7 +1,6 @@
 // src/pages/CallCenterPage.tsx
 
 import React, { useState, useEffect } from 'react';
-// Fix: Use `GoogleGenAI` instead of the deprecated `GoogleGenerativeAI`.
 import { GoogleGenAI, Type } from "@google/genai";
 import { useSharedStore } from '../stores/useSharedStore';
 import * as callCenterApi from '../services/callCenterApi';
@@ -47,7 +46,6 @@ const CallCenterPage = () => {
         setError(null);
 
         try {
-            // Fix: Use `GoogleGenAI` instead of the deprecated `GoogleGenerativeAI`.
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
             const prompt = `
