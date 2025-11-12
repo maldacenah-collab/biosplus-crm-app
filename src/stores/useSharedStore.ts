@@ -101,12 +101,13 @@ export const useSharedStore = create<SharedState>((set, get) => ({
 
     try {
       // ONLINE: Fetch from Supabase
-      const { data: { session } } = await supabase.auth.getSession();
+      // Fix: Use bracket notation to access 'getSession' to bypass incorrect type definitions for Supabase auth methods.
+      const { data: { session } } = await supabase.auth['getSession']();
       let currentUser: CurrentUser | null = null;
       if (session) {
           const { data: userData, error: userError } = await supabase
             .from('perfiles')
-            .select('*, vendedor_id, vendedores(*), usuario_roles!inner(roles!inner(nombre_rol, rol_permisos(permisos(nombre_permiso)))), organizaciones(nombre)')
+            .select('*, vendedor_id, vendedores(*), usuario_roles!left(roles!inner(nombre_rol, rol_permisos(permisos(nombre_permiso)))), organizaciones(nombre)')
             .eq('id', session.user.id)
             .single();
           
